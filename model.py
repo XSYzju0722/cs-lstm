@@ -23,17 +23,17 @@ class highwayNet(nn.Module):
         self.train_flag = args['train_flag']
 
         ## Sizes of network layers
-        self.encoder_size = args['encoder_size']
-        self.decoder_size = args['decoder_size']
-        self.in_length = args['in_length']
-        self.out_length = args['out_length']
-        self.grid_size = args['grid_size']
-        self.soc_conv_depth = args['soc_conv_depth']
-        self.conv_3x1_depth = args['conv_3x1_depth']
-        self.dyn_embedding_size = args['dyn_embedding_size']
-        self.input_embedding_size = args['input_embedding_size']
-        self.num_lat_classes = args['num_lat_classes']
-        self.num_lon_classes = args['num_lon_classes']
+        self.encoder_size = args['encoder_size']        # 64
+        self.decoder_size = args['decoder_size']        # 128
+        self.in_length = args['in_length']              # 16
+        self.out_length = args['out_length']            # 25
+        self.grid_size = args['grid_size']              # 13, 3
+        self.soc_conv_depth = args['soc_conv_depth']    # 64
+        self.conv_3x1_depth = args['conv_3x1_depth']    # 16
+        self.dyn_embedding_size = args['dyn_embedding_size']     # 32
+        self.input_embedding_size = args['input_embedding_size'] # 32 
+        self.num_lat_classes = args['num_lat_classes']           # 3    横轴 左、右、不变
+        self.num_lon_classes = args['num_lon_classes']           # 2    纵轴 减速、不变
         self.soc_embedding_size = (((args['grid_size'][0]-4)+1)//2)*self.conv_3x1_depth
 
         ## Define network weights
@@ -107,8 +107,8 @@ class highwayNet(nn.Module):
             lon_pred = self.softmax(self.op_lon(enc))
 
             if self.train_flag:
-                ## Concatenate maneuver encoding of the true maneuver
-                enc = torch.cat((enc, lat_enc, lon_enc), 1)
+                ## Concatenate 连接 maneuver encoding of the true maneuver
+                enc = torch.cat((enc, lat_enc, lon_enc), 1)   # 1表示在第二个维度上拼接
                 fut_pred = self.decode(enc)
                 return fut_pred, lat_pred, lon_pred
             else:
